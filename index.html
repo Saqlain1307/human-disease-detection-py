@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        
+    </head>
+    <body>
+        <div class="hero">
+            <div class="navbar">
+                <div class="logo">
+                    <h2>Dr.Sherlock Holmes</h2>
+                </div>
+                <div class="menu">
+                    <ul>
+                        <li><a href="#">HOME</a></li>
+                        <li><a href="#">ABOUT</a></li>
+                        <li><a href="#">SERVICE</a></li>
+                        <li><a href="#">CONTACT</a></li>
+                    </ul>
+                </div>
+            </div> 
+            <div class="header-content">
+                <h1>Welcome! Doctor.</h1>
+                <h3>A one-stop solution to all your queries.</h3>
+                <p>Insert the image you want to detect!<p> 
+                <form id="uploadForm">
+                    <input type="file" id="fileInput" accept="image/*">
+                    <button type="button" onclick="uploadImage()">Upload Image</button>
+                </form>
+                
+                <div id="predictionResult"></div>
+                <script>
+                    function uploadImage() {
+                        var fileInput = document.getElementById('fileInput');
+                        var file = fileInput.files[0];
+            
+                        if (file) {
+                            var formData = new FormData();
+                            formData.append('image', file);
+                            fetch('http://127.0.0.1:5000/upload', {
+                                method: 'POST',
+                                body: formData,
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Server response:', data);
+            
+                                if (data.status === 'success') {
+                                    // Display the prediction on the web page
+                                    displayPrediction(data.prediction);
+                                } else {
+                                    // Display error message
+                                    alert('Error: ' + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Error uploading image.');
+                            });
+                        } else {
+                            alert('Please select an image file.');
+                        }
+                    }
+            
+                    function displayPrediction(prediction) {
+                        // Update the HTML element with the prediction result
+                        var predictionResult = document.getElementById('predictionResult');
+                        predictionResult.innerHTML = 'Prediction: ' + prediction;
+                    }
+                </script>
+            </div>          
+        </div>
+    </body>
+</html>
